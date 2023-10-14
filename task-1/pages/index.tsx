@@ -3,7 +3,7 @@ import Layout from "../src/components/layout";
 import Input from "../src/components/input";
 import Text from "../src/components/text";
 import { SignupContext } from "../src/context/signup.context";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import SelectInput from "../src/components/select_input";
 import { IoMdCheckmark } from "react-icons/io";
 import { TiTimes } from "react-icons/ti";
@@ -12,9 +12,57 @@ import { AiOutlineRight } from "react-icons/ai";
 import { HiQuestionMarkCircle } from "react-icons/hi";
 import Tooltip from "../src/components/tooltip";
 import User from "../src/components/user";
+import { useFormik } from "formik";
+import {
+  IFormikSteTwoSchema,
+  IFormikStepOneSchema,
+  IFormikStepThreeSchema,
+} from "../src/utils/yup";
 
 const StepOne = () => {
-  const { currentStep } = useContext(SignupContext);
+  const { step1, handleFormData, isSubmitting, setIsSubmitting } =
+    useContext(SignupContext);
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: step1.firstName,
+      lastName: step1.lastName,
+      email: step1.email,
+      phoneNumber: step1.phoneNumber,
+      password: step1.password,
+      cpassword: step1.cpassword,
+    },
+    enableReinitialize: true,
+    validationSchema: IFormikStepOneSchema,
+    validateOnChange: false,
+    validateOnMount: false,
+    validateOnBlur: false,
+    onSubmit: async (data, { setSubmitting }) => {
+      try {
+        handleFormData(data, "step1");
+        setSubmitting(false);
+        setIsSubmitting(false);
+      } catch (error: any) {
+        setSubmitting(false);
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (isSubmitting) {
+      formik.submitForm();
+      setIsSubmitting(false);
+    }
+    return () => {};
+  }, [isSubmitting]);
+
+  // useEffect(() => {
+  //   if (Object.values(step1).length) {
+  //     formik.setValues({ ...step1 } as any, true);
+  //   }
+  //   return () => {};
+  // }, [step1]);
 
   return (
     <div>
@@ -38,13 +86,23 @@ const StepOne = () => {
       <div className="sm:flex justify-start items-center w-full">
         <Input
           label="First Name*"
-          // error="required"
+          onChange={(firstName) => {
+            formik.setValues((prev) => ({ ...prev, firstName }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.firstName as string}
+          error={formik.errors.firstName as string}
           placeholder="Input Your First Name"
           className="mb-4 sm:mr-3 sm:w-1/2"
         />
         <Input
           label="Last Name*"
-          // error="required"
+          onChange={(lastName) => {
+            formik.setValues((prev) => ({ ...prev, lastName }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.lastName as string}
+          error={formik.errors.lastName as string}
           placeholder="Input Your Last Name"
           className="mb-4 sm:ml-3 sm:w-1/2"
         />
@@ -53,13 +111,23 @@ const StepOne = () => {
         <Input
           label="Email*"
           type="email"
-          // error="required"
+          onChange={(email) => {
+            formik.setValues((prev) => ({ ...prev, email }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.email as string}
+          error={formik.errors.email as string}
           placeholder="Input Your Email"
           className="mb-4 sm:mr-3 sm:w-1/2"
         />
         <Input
           label="Phone Number*"
-          // error="required"
+          onChange={(phoneNumber) => {
+            formik.setValues((prev) => ({ ...prev, phoneNumber }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.phoneNumber as string}
+          error={formik.errors.phoneNumber as string}
           placeholder="Input Your Phone Number"
           className="mb-4 sm:ml-3 sm:w-1/2"
         />
@@ -67,13 +135,25 @@ const StepOne = () => {
       <div className="sm:flex justify-start items-center w-full">
         <Input
           label="Password*"
-          // error="required"
+          type="password"
+          onChange={(password) => {
+            formik.setValues((prev) => ({ ...prev, password }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.password as string}
+          error={formik.errors.password as string}
           placeholder="Create Password"
           className="mb-4 sm:mr-3 sm:w-1/2"
         />
         <Input
           label="Confirm Password*"
-          // error="required"
+          onChange={(cpassword) => {
+            formik.setValues((prev) => ({ ...prev, cpassword }));
+            formik.setErrors({});
+          }}
+          type="password"
+          value={formik.initialValues.cpassword as string}
+          error={formik.errors.cpassword as string}
           placeholder="Confirm Your Password"
           className="mb-4 sm:ml-3 sm:w-1/2"
         />
@@ -83,8 +163,42 @@ const StepOne = () => {
 };
 
 const StepTwo = () => {
-  const { currentStep } = useContext(SignupContext);
+  const { step2, handleFormData, isSubmitting, setIsSubmitting } =
+    useContext(SignupContext);
 
+  const formik = useFormik({
+    initialValues: {
+      brandName: step2.brandName,
+      brandType: step2.brandType,
+      streetAddress: step2.streetAddress,
+      city: step2.city,
+      zipCode: step2.zipCode,
+      taxId: step2.taxId,
+    },
+    enableReinitialize: true,
+    validationSchema: IFormikSteTwoSchema,
+    validateOnChange: false,
+    validateOnMount: false,
+    validateOnBlur: false,
+    onSubmit: async (data, { setSubmitting }) => {
+      try {
+        handleFormData(data, "step2");
+        setSubmitting(false);
+        setIsSubmitting(false);
+      } catch (error: any) {
+        setSubmitting(false);
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (isSubmitting) {
+      formik.submitForm();
+      setIsSubmitting(false);
+    }
+    return () => {};
+  }, [isSubmitting]);
   return (
     <div>
       <Text
@@ -112,7 +226,12 @@ const StepTwo = () => {
         <div className="sm:flex justify-start items-center w-full">
           <Input
             label="Brand Name*"
-            // error="required"
+            onChange={(brandName) => {
+              formik.setValues((prev) => ({ ...prev, brandName }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.brandName as string}
+            error={formik.errors.brandName as string}
             placeholder="Input Your Brand Name"
             className="mb-4 sm:mr-3 sm:w-1/2"
           />
@@ -129,7 +248,12 @@ const StepTwo = () => {
                 />
               ),
             }}
-            // error="required"
+            onChange={(brandType) => {
+              formik.setValues((prev) => ({ ...prev, brandType }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.brandType as string}
+            error={formik.errors.brandType as string}
             data={[
               { key: "Local", value: "Local" },
               { key: "National", value: "National" },
@@ -141,13 +265,23 @@ const StepTwo = () => {
         <div className="sm:flex justify-start items-center w-full">
           <Input
             label="Street Address*"
-            // error="required"
+            onChange={(streetAddress) => {
+              formik.setValues((prev) => ({ ...prev, streetAddress }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.streetAddress as string}
+            error={formik.errors.streetAddress as string}
             placeholder="Input Your Street Address"
             className="mb-4 sm:mr-3 sm:w-1/2"
           />
           <Input
             label="City*"
-            // error="required"
+            onChange={(city) => {
+              formik.setValues((prev) => ({ ...prev, city }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.city as string}
+            error={formik.errors.city as string}
             placeholder="Input City"
             className="mb-4 sm:ml-3 sm:w-1/2"
           />
@@ -155,13 +289,23 @@ const StepTwo = () => {
         <div className="sm:flex justify-start items-center w-full">
           <Input
             label="Zip Code*"
-            // error="required"
+            onChange={(zipCode) => {
+              formik.setValues((prev) => ({ ...prev, zipCode }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.zipCode as string}
+            error={formik.errors.zipCode as string}
             placeholder="Input Zip Code"
             className="mb-4 sm:mr-3 sm:w-1/2"
           />
           <Input
             label="Tax Id Number*"
-            // error="required"
+            onChange={(taxId) => {
+              formik.setValues((prev) => ({ ...prev, taxId }));
+              formik.setErrors({});
+            }}
+            value={formik.initialValues.taxId as string}
+            error={formik.errors.taxId as string}
             placeholder="Input Your Tax Id Number"
             className="mb-4 sm:ml-3 sm:w-1/2"
           />
@@ -232,7 +376,37 @@ const StepTwo = () => {
 };
 
 const StepThree = () => {
-  const { currentStep } = useContext(SignupContext);
+  const { step3, handleFormData, setIsSubmitting } = useContext(SignupContext);
+
+  const [users, setUsers] = useState({});
+
+  const formik = useFormik({
+    initialValues: {
+      fullName: "",
+      email: "",
+    },
+    enableReinitialize: true,
+    validationSchema: IFormikStepThreeSchema,
+    validateOnChange: false,
+    validateOnMount: false,
+    validateOnBlur: false,
+    onSubmit: async (data, { setSubmitting }) => {
+      try {
+        setUsers({ ...step3, [data.email]: data });
+        handleFormData({ ...step3, [data.email]: data }, "step3");
+        setSubmitting(false);
+        setIsSubmitting(false);
+      } catch (error: any) {
+        setSubmitting(false);
+        setIsSubmitting(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    setUsers(step3);
+    return () => {};
+  }, [step3]);
 
   return (
     <div>
@@ -256,19 +430,29 @@ const StepThree = () => {
       <div className="sm:flex justify-start items-center w-full">
         <Input
           label="Full Name*"
-          // error="required"
+          onChange={(fullName) => {
+            formik.setValues((prev) => ({ ...prev, fullName }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.fullName as string}
+          error={formik.errors.fullName as string}
           placeholder="Input Your First Name"
           className="mb-4 sm:mr-3 sm:w-2/5"
         />
         <Input
           label="Email*"
           type="email"
-          // error="required"
+          onChange={(email) => {
+            formik.setValues((prev) => ({ ...prev, email }));
+            formik.setErrors({});
+          }}
+          value={formik.initialValues.email as string}
+          error={formik.errors.email as string}
           placeholder="Input Your Email"
           className="mb-4 sm:mr-3 sm:w-2/5"
         />
         <Button
-          // onClick={}
+          onClick={() => formik.submitForm()}
           className="mt-4 sm:w-1/5 border-primary border bg-white"
           textProps={{
             value: "Invite User",
@@ -277,17 +461,9 @@ const StepThree = () => {
         />
       </div>
       <div className="flex flex-wrap justify-start items-center">
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
-        <User name="Besique Monroe" email="besique@gmail.com" />
+        {Object.values(users).map((user: any) => (
+          <User name={user.fullName} email={user.email} key={user.email} />
+        ))}
       </div>
     </div>
   );

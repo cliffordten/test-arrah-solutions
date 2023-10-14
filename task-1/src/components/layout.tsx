@@ -1,9 +1,9 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import Head from "next/head";
 import Text from "./text";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import Button from "./button";
-import { SignupContext } from "../context/signup.context";
+import { SignupContext } from "../../../task-1/src/context/signup.context";
 
 type Props = {
   children?: ReactNode;
@@ -28,14 +28,23 @@ const steps = [
 const Layout = ({ children, title = "This is the default title" }: Props) => {
   const [current, setCurrent] = useState(1);
   const [formData, setFormData] = useState({ step1: {}, step2: {}, step3: {} });
-  console.log({ current });
-  const handleFormData = (data: any) => {
-    console.log({ data });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleFormData = (data: any, step: string) => {
+    setFormData((prev) => ({ ...prev, [step]: data }));
+    setCurrent((prev) => (prev < 3 ? prev + 1 : prev));
+  };
+
+  const handleCompleteForm = () => {
+    console.log(formData);
+    alert(JSON.stringify(formData, null, 2));
   };
   return (
     <SignupContext.Provider
       value={{
         ...formData,
+        isSubmitting,
+        setIsSubmitting,
         currentStep: current,
         handleFormData,
       }}
@@ -109,16 +118,16 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
             </div>
             {children}
 
-            <div className="w-full flex justify-center items-center mt-10">
-              <Button
-                onClick={() =>
-                  setCurrent((prev) => (prev < 3 ? prev + 1 : prev))
-                }
-                textProps={{
-                  value: "Complete Setup",
-                }}
-              />
-            </div>
+            {current === 3 ? (
+              <div className="w-full flex justify-center items-center mt-10">
+                <Button
+                  onClick={handleCompleteForm}
+                  textProps={{
+                    value: "Complete Setup",
+                  }}
+                />
+              </div>
+            ) : undefined}
           </div>
         </div>
         <footer>
@@ -146,9 +155,7 @@ const Layout = ({ children, title = "This is the default title" }: Props) => {
                 />
               ) : undefined}
               <Button
-                onClick={() =>
-                  setCurrent((prev) => (prev < 3 ? prev + 1 : prev))
-                }
+                onClick={() => setIsSubmitting(true)}
                 textProps={{
                   value: "Next Step",
                   rightIcon: <AiOutlineRight className="text-white text-xl" />,

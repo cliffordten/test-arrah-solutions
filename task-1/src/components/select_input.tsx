@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Text, { ITextProps } from "./text";
 
 interface IDataProps {
@@ -14,6 +14,7 @@ interface ISelectInputProps {
   label?: string;
   onChange?: (value: any) => any;
   placeholder?: string;
+  value?: string;
   data?: IDataProps[];
 }
 
@@ -24,16 +25,22 @@ const SelectInput = ({
   labelTextProps,
   label,
   placeholder,
+  value,
   onChange,
   data = [],
 }: ISelectInputProps) => {
+  const [currentVal, setCurrentVal] = useState("");
   return (
     <div className={className}>
       {label ? (
         <Text value={label} className="mb-2" {...labelTextProps} />
       ) : undefined}
       <select
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => {
+          onChange?.(e.target.value);
+          setCurrentVal?.(e.target.value);
+        }}
+        value={currentVal || value}
         className="border border-darkInput rounded-lg focus:border-secondary block w-full p-2.5"
       >
         {[{ key: placeholder, value: placeholder }, ...data]?.map((item) => (
