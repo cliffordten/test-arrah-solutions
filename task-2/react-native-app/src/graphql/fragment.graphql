@@ -1,0 +1,10 @@
+fragment ProductFragment on Product {
+  amount
+  createdAt
+  currency
+  id
+  imageUrl
+  name
+  price
+  updatedAt
+}
